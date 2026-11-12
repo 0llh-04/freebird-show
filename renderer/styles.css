@@ -495,6 +495,8 @@ input:focus {
 
 .duel-vs .glove {
   display: inline-block;
+  position: relative;
+  z-index: 1;
   filter: drop-shadow(0 10px 26px rgba(248, 113, 113, 0.4));
 }
 
@@ -516,16 +518,19 @@ input:focus {
   position: absolute;
   left: 50%;
   top: 50%;
-  margin: -1.1rem 0 0 -1.1rem;
-  font-size: 2.2rem;
+  z-index: 0;
+  margin: -2.6rem 0 0 -2.6rem;
+  font-size: 5.2rem;
+  line-height: 1;
   opacity: 0;
   pointer-events: none;
+  filter: drop-shadow(0 0 30px rgba(251, 146, 60, 0.85));
   animation: impact-pop 1.3s ease-in-out infinite;
 }
 
 @keyframes impact-pop {
-  0%, 40%, 62%, 100% { opacity: 0; transform: scale(0.4); }
-  50% { opacity: 1; transform: scale(1.25); }
+  0%, 38%, 64%, 100% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.35); }
 }
 
 .duel-card {

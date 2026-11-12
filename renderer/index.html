@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+  <title>Freebird Gameshow</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">🦅 <span>Freebird Gameshow</span></div>
+    <div class="round-indicator" id="round-indicator"></div>
+  </header>
+
+  <main id="app">
+
+    <section id="screen-setup" class="screen">
+      <div id="resume-banner" class="card resume-banner hidden">
+        <div>
+          <strong>Unterbrochene Show gefunden.</strong>
+          <span id="resume-info"></span>
+        </div>
+        <div class="row gap">
+          <button id="btn-resume" class="btn primary">Fortsetzen</button>
+          <button id="btn-discard" class="btn ghost">Verwerfen</button>
+        </div>
+      </div>
+
+      <div class="setup-grid">
+        <div class="card">
+          <h2>1. Teams erstellen</h2>
+          <p class="hint">Jedes Team hat zwei Spieler und startet mit 6 Jokern.</p>
+          <form id="team-form" autocomplete="off">
+            <label>Teamname
+              <input id="in-team-name" type="text" placeholder="z. B. Die Adler" maxlength="40" required />
+            </label>
+            <div class="row gap">
+              <label class="grow">Spieler 1
+                <input id="in-player-1" type="text" placeholder="Name" maxlength="40" required />
+              </label>
+              <label class="grow">Spieler 2
+                <input id="in-player-2" type="text" placeholder="Name" maxlength="40" required />
+              </label>
+            </div>
+            <p id="team-error" class="error hidden"></p>
+            <button type="submit" class="btn primary">➕ Team hinzufügen</button>
+          </form>
+          <div id="team-list" class="team-list"></div>
+        </div>
+
+        <div class="card">
+          <h2>2. Rundenanzahl</h2>
+          <p class="hint">Wie viele Runden soll die Show laufen?</p>
+          <div class="rounds-picker">
+            <button type="button" class="btn round-step" id="btn-rounds-down">−</button>
+            <div class="rounds-value" id="rounds-value">3</div>
+            <button type="button" class="btn round-step" id="btn-rounds-up">+</button>
+          </div>
+          <div class="start-wrap">
+            <button id="btn-start" class="btn big primary" disabled>🎬 Show starten</button>
+            <p id="start-hint" class="hint center">Mindestens 2 Teams benötigt.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-play" class="screen hidden">
+      <div class="turn-banner" id="turn-banner">
+        <div class="turn-title" id="turn-title"></div>
+        <div class="turn-sub" id="turn-sub"></div>
+      </div>
+
+      <div class="queue" id="queue"></div>
+
+      <div class="play-grid">
+        <div class="card">
+          <h2>🃏 Joker &amp; Hinweise</h2>
+          <div class="joker-dots" id="joker-dots"></div>
+          <p class="hint" id="joker-count"></p>
+          <label>Wofür wird der Joker eingesetzt? (optional)
+            <input id="in-joker-note" type="text" placeholder="z. B. Hinweis für Frage 3" maxlength="80" />
+          </label>
+          <button id="btn-use-joker" class="btn primary">Joker einsetzen</button>
+        </div>
+
+        <div class="card">
+          <h2>🦅 Punkte vergeben</h2>
+          <div class="score-big" id="current-score">0</div>
+          <div class="quick-points">
+            <button class="btn point" data-points="10">+10</button>
+            <button class="btn point" data-points="25">+25</button>
+            <button class="btn point" data-points="50">+50</button>
+            <button class="btn point" data-points="100">+100</button>
+          </div>
+          <div class="row gap">
+            <label class="grow">Eigene Punktzahl
+              <input id="in-points" type="number" step="1" placeholder="z. B. 35 (auch −)" />
+            </label>
+            <button id="btn-add-points" class="btn primary">Punkte geben</button>
+          </div>
+          <button id="btn-undo" class="btn ghost">↩︎ Letzte Aktion zurücknehmen</button>
+        </div>
+
+        <div class="card">
+          <h2>📋 Protokoll</h2>
+          <div id="protocol" class="protocol"></div>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <button id="btn-next-team" class="btn big primary">Weiter ▸</button>
+      </div>
+    </section>
+
+    <section id="screen-resolve" class="screen hidden">
+      <div class="resolve-head">
+        <h2 id="resolve-title">Auflösung</h2>
+        <p class="hint" id="resolve-sub"></p>
+      </div>
+      <div id="leaderboard" class="leaderboard"></div>
+      <div class="footer-nav">
+        <button id="btn-resolve-next" class="btn big primary">Weiter ▸</button>
+      </div>
+    </section>
+
+    <section id="screen-podium" class="screen hidden">
+      <h2 class="podium-title">🏆 Siegerehrung</h2>
+      <div class="podium" id="podium"></div>
+      <div class="final-list" id="final-list"></div>
+      <div class="footer-nav">
+        <button id="btn-new-game" class="btn big ghost">Neues Spiel starten</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="turn-overlay" class="turn-overlay hidden">
+    <div class="overlay-inner">
+      <div class="overlay-eagle">🦅</div>
+      <div class="overlay-title" id="overlay-title"></div>
+      <div class="overlay-sub" id="overlay-sub"></div>
+      <button id="btn-overlay-go" class="btn big primary">Los geht’s!</button>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script src="game.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

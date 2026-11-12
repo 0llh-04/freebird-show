@@ -554,7 +554,12 @@ function renderTiebreak() {
   const gloveRight = document.createElement('span');
   gloveRight.className = 'glove glove-r';
   gloveRight.textContent = '🥊';
+  const impact = document.createElement('span');
+  impact.className = 'impact';
+  impact.textContent = '💥';
+
   vs.appendChild(gloveLeft);
+  vs.appendChild(impact);
   vs.appendChild(gloveRight);
 
   els.duelGrid.appendChild(makeCard(aId));

@@ -485,9 +485,10 @@ input:focus {
 
 .duel-vs {
   align-self: center;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
   font-size: 3.6rem;
   padding: 0 6px;
 }
@@ -502,13 +503,29 @@ input:focus {
 .duel-vs .glove-r { animation: punch-left 1.3s ease-in-out infinite; }
 
 @keyframes punch-right {
-  0%, 100% { transform: translateX(-12px) rotate(-8deg); }
-  50% { transform: translateX(12px) rotate(0deg) scale(1.15); }
+  0%, 36%, 64%, 100% { transform: translateX(0) rotate(-6deg); }
+  50% { transform: translateX(10px) rotate(0deg) scale(1.18); }
 }
 
 @keyframes punch-left {
-  0%, 100% { transform: translateX(12px) scaleX(-1) rotate(8deg); }
-  50% { transform: translateX(-12px) scaleX(-1) rotate(0deg) scale(1.15); }
+  0%, 36%, 64%, 100% { transform: translateX(0) scaleX(-1) rotate(6deg); }
+  50% { transform: translateX(-10px) scaleX(-1) rotate(0deg) scale(1.18); }
+}
+
+.duel-vs .impact {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -1.1rem 0 0 -1.1rem;
+  font-size: 2.2rem;
+  opacity: 0;
+  pointer-events: none;
+  animation: impact-pop 1.3s ease-in-out infinite;
+}
+
+@keyframes impact-pop {
+  0%, 40%, 62%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1.25); }
 }
 
 .duel-card {

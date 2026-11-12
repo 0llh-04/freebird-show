@@ -485,16 +485,30 @@ input:focus {
 
 .duel-vs {
   align-self: center;
-  font-size: 4.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 3.6rem;
   padding: 0 6px;
-  filter: drop-shadow(0 10px 26px rgba(248, 113, 113, 0.4));
-  animation: gloves-clash 1.3s ease-in-out infinite;
 }
 
-@keyframes gloves-clash {
-  0%, 100% { transform: translateX(0) scale(1); }
-  25% { transform: translateX(-16px) rotate(-12deg) scale(1.12); }
-  75% { transform: translateX(16px) rotate(12deg) scale(1.12); }
+.duel-vs .glove {
+  display: inline-block;
+  filter: drop-shadow(0 10px 26px rgba(248, 113, 113, 0.4));
+}
+
+.duel-vs .glove-l { animation: punch-right 1.3s ease-in-out infinite; }
+
+.duel-vs .glove-r { animation: punch-left 1.3s ease-in-out infinite; }
+
+@keyframes punch-right {
+  0%, 100% { transform: translateX(-12px) rotate(-8deg); }
+  50% { transform: translateX(12px) rotate(0deg) scale(1.15); }
+}
+
+@keyframes punch-left {
+  0%, 100% { transform: translateX(12px) scaleX(-1) rotate(8deg); }
+  50% { transform: translateX(-12px) scaleX(-1) rotate(0deg) scale(1.15); }
 }
 
 .duel-card {

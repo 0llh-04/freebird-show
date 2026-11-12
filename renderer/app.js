@@ -546,12 +546,19 @@ function renderTiebreak() {
     return card;
   };
 
-  const gloves = document.createElement('div');
-  gloves.className = 'duel-vs';
-  gloves.textContent = '🥊';
+  const vs = document.createElement('div');
+  vs.className = 'duel-vs';
+  const gloveLeft = document.createElement('span');
+  gloveLeft.className = 'glove glove-l';
+  gloveLeft.textContent = '🥊';
+  const gloveRight = document.createElement('span');
+  gloveRight.className = 'glove glove-r';
+  gloveRight.textContent = '🥊';
+  vs.appendChild(gloveLeft);
+  vs.appendChild(gloveRight);
 
   els.duelGrid.appendChild(makeCard(aId));
-  els.duelGrid.appendChild(gloves);
+  els.duelGrid.appendChild(vs);
   els.duelGrid.appendChild(makeCard(bId));
 }
 

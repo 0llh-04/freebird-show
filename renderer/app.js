@@ -821,6 +821,14 @@ function bindEvents() {
     if (event.key === 'Enter') useJoker();
   });
   els.btnUndo.addEventListener('click', undoLast);
+  els.btnOverlayGo.addEventListener('click', () => {
+    els.overlay.classList.add('hidden');
+  });
+  els.overlay.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      els.overlay.classList.add('hidden');
+    }
+  });
   els.btnNextTeam.addEventListener('click', onFooterButton);
   els.btnResolveNext.addEventListener('click', nextFromResolve);
   els.btnNewGame.addEventListener('click', newGame);

@@ -9,7 +9,7 @@ Joker/Hinweise protokollieren, animiertes Leaderboard, Tiebreaker-Runde und Podi
 - **Spielphase**: „Team X ist am Zug“-Einblendung, Joker-Einsatz mit optionalem Notizfeld wird protokolliert, Punkte (auch negative Korrekturen) mit Sofort-Buttons (+1/+5/+10) oder freier Eingabe vergeben, letzte Aktion kann zurückgenommen werden.
 - **Auflösungsphase**: Leaderboard mit hochzählendem Gesamtpunktestand (Animation), animiertem Platzwechsel (FLIP) und Balkenanzeige.
 - **Rundenwechsel**: Jede neue Runde startet mit einer anderen (rotierten) Teamreihenfolge.
-- **Tiebreaker**: Bei Punktegleichstand nach der letzten Runde treten nur die betroffenen Teams gegeneinander an – Punkte zählen nur für die Entscheidung, nicht für die Gesamtwertung. Bei erneutem Gleichstand gibt es eine Verlängerung.
+- **Tiebreaker**: Bei Punktegleichstand nach der letzten Runde treten die betroffenen Teams head-to-head gegeneinander an – eine reine entweder-oder-Entscheidung ohne Punkte und ohne Joker, die nur die Platzierung im Leaderboard bestimmt.
 - **Podium**: Siegerteam wird gekürt, Teamnamen blenden langsam ein, Konfetti in den Show-Farben, finaler Punktestand aller Teams.
 - **Autosave**: Der Show-Zustand wird lokal gespeichert; nach einem Neustart kann fortgesetzt werden.
 - **Design**: dunkler Hintergrund mit Verlauf von Lila über Blau nach Grün.
@@ -50,5 +50,5 @@ npm test
 2. Pro Team: Joker einsetzen (wird protokolliert) und Punkte sammeln → „Nächstes Team“.
 3. Nach dem letzten Team: Auflösung mit animiertem Leaderboard.
 4. Nächste Runde starten (neue Reihenfolge) – bis zur letzten Runde.
-5. Bei Gleichstand: Tiebreaker der betroffenen Teams (ohne Einfluss auf die Gesamtpunkte).
+5. Bei Gleichstand: Tiebreaker head-to-head – per Klick entscheiden, welches Team gewinnt (keine Punkte, keine Joker).
 6. Podium: Sieger wird gekürt, Konfetti 🎉, finaler Punktestand.

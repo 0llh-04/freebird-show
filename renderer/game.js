@@ -59,12 +59,8 @@
     return groups;
   }
 
-  function rankTiebreakGroup(teamIds, scores) {
-    const sorted = teamIds.slice().sort((a, b) => (scores[b] || 0) - (scores[a] || 0));
-    for (let i = 1; i < sorted.length; i++) {
-      if ((scores[sorted[i]] || 0) === (scores[sorted[i - 1]] || 0)) return null;
-    }
-    return sorted;
+  function duelRanking(champion, eliminated) {
+    return [champion].concat(eliminated.slice().reverse());
   }
 
   function computeFinalRanking(teams, resolvedGroups) {
@@ -93,7 +89,7 @@
     rotateOrder,
     computeStandings,
     findTieGroups,
-    rankTiebreakGroup,
+    duelRanking,
     computeFinalRanking,
     makeLogEntry
   };

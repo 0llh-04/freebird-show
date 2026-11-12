@@ -435,14 +435,46 @@ input:focus {
 
 .lb-jokers { text-align: right; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
 
-/* ---------- Tiebreaker ---------- */
+/* ---------- Tiebreaker (Head-to-Head) ---------- */
 
-.tiebreak-note {
-  text-align: center;
-  color: var(--sky);
-  font-weight: 700;
-  margin: 4px 0 14px;
+.duel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
 }
+
+.duel-card {
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  padding: 48px 24px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.duel-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(168, 85, 247, 0.7);
+  box-shadow: 0 16px 44px rgba(124, 58, 237, 0.35);
+}
+
+.duel-card:active { transform: translateY(-1px); }
+
+.duel-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.duel-players { color: var(--muted); font-size: 1rem; }
 
 /* ---------- Podium ---------- */
 

@@ -49,10 +49,9 @@ test('findTieGroups findet Gruppen mit gleichen Punkten', () => {
   assert.deepEqual(G.findTieGroups(standings, [[1, 2], [3, 4]]), []);
 });
 
-test('rankTiebreakGroup liefert null bei unentschieden', () => {
-  assert.deepEqual(G.rankTiebreakGroup([1, 2], { 1: 30, 2: 10 }), [1, 2]);
-  assert.equal(G.rankTiebreakGroup([1, 2], { 1: 20, 2: 20 }), null);
-  assert.deepEqual(G.rankTiebreakGroup([2, 1], { 1: 30, 2: 40 }), [2, 1]);
+test('duelRanking ordnet nach Duell-Ergebnis (Sieger zuerst, zuletzt Gescheiterte danach)', () => {
+  assert.deepEqual(G.duelRanking(2, [1]), [2, 1]);
+  assert.deepEqual(G.duelRanking(3, [1, 2]), [3, 2, 1]);
 });
 
 test('computeFinalRanking wendet Tiebreaker-Ergebnis an, ohne Punkte zu ändern', () => {

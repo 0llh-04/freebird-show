@@ -13,6 +13,7 @@ const els = {
     setup: $('screen-setup'),
     play: $('screen-play'),
     resolve: $('screen-resolve'),
+    tiebreak: $('screen-tiebreak'),
     podium: $('screen-podium')
   },
   resumeBanner: $('resume-banner'),
@@ -43,6 +44,9 @@ const els = {
   resolveSub: $('resolve-sub'),
   leaderboard: $('leaderboard'),
   btnResolveNext: $('btn-resolve-next'),
+  tiebreakTitle: $('tiebreak-title'),
+  tiebreakSub: $('tiebreak-sub'),
+  duelGrid: $('duel-grid'),
   podium: $('podium'),
   finalList: $('final-list'),
   btnNewGame: $('btn-new-game'),
@@ -140,7 +144,7 @@ function updateRoundIndicator() {
   if (!state || state.phase === 'setup') {
     els.roundIndicator.textContent = '';
   } else if (state.phase === 'tiebreak') {
-    els.roundIndicator.textContent = `Tiebreaker – Runde ${state.tiebreak.round}`;
+    els.roundIndicator.textContent = 'Tiebreaker';
   } else if (state.phase === 'podium') {
     els.roundIndicator.textContent = 'Siegerehrung';
   } else {
@@ -218,12 +222,7 @@ function startGame() {
 
 /* ================= Play ================= */
 
-function isTiebreak() {
-  return state.phase === 'tiebreak';
-}
-
 function currentTeamId() {
-  if (isTiebreak()) return state.tiebreak.order[state.tiebreak.index] ?? null;
   return state.order[state.playIndex] ?? null;
 }
 
@@ -231,34 +230,19 @@ function enterTurn() {
   showScreen('play');
   renderPlay();
   const team = teamById(currentTeamId());
-  if (isTiebreak()) {
-    showTurnOverlay(
-      `Tiebreaker: ${team.name} ist am Zug!`,
-      `${team.players[0]} & ${team.players[1]} – entscheidet, wer vorne liegt!`,
-      'Auf geht’s!'
-    );
-  } else {
-    showTurnOverlay(
-      `${team.name} ist am Zug!`,
-      `${team.players[0]} & ${team.players[1]} – viel Erfolg! 🦅`,
-      'Auf geht’s!'
-    );
-  }
+  showTurnOverlay(
+    `${team.name} ist am Zug!`,
+    `${team.players[0]} & ${team.players[1]} – viel Erfolg! 🦅`,
+    'Auf geht’s!'
+  );
 }
 
 function renderPlay() {
   const team = teamById(currentTeamId());
   if (!team) return;
 
-  if (isTiebreak()) {
-    els.turnTitle.textContent = `Tiebreaker: ${team.name} ist am Zug`;
-    els.turnSub.textContent =
-      `${team.players[0]} & ${team.players[1]} · Punkte zählen nur für die Entscheidung, ` +
-      'nicht für die Gesamtwertung.';
-  } else {
-    els.turnTitle.textContent = `${team.name} ist am Zug`;
-    els.turnSub.textContent = `${team.players[0]} & ${team.players[1]} · Runde ${state.round}`;
-  }
+  els.turnTitle.textContent = `${team.name} ist am Zug`;
+  els.turnSub.textContent = `${team.players[0]} & ${team.players[1]} · Runde ${state.round}`;
 
   renderQueue();
   renderJokers(team);
@@ -269,15 +253,13 @@ function renderPlay() {
 
 function renderQueue() {
   els.queue.innerHTML = '';
-  const ids = isTiebreak() ? state.tiebreak.order : state.order;
   const activeId = currentTeamId();
-  ids.forEach((id, idx) => {
+  state.order.forEach((id, idx) => {
     const team = teamById(id);
     const chip = document.createElement('div');
     chip.className = 'queue-chip';
-    const done = isTiebreak() ? idx < state.tiebreak.index : idx < state.playIndex;
     if (id === activeId) chip.classList.add('active');
-    else if (done) chip.classList.add('done');
+    else if (idx < state.playIndex) chip.classList.add('done');
     chip.textContent = team.name;
     els.queue.appendChild(chip);
   });
@@ -299,20 +281,19 @@ function renderJokers(team) {
 }
 
 function renderScore(team) {
-  const target = isTiebreak() ? (state.tiebreak.scores[team.id] || 0) : team.score;
   const shown = Number(els.currentScore.dataset.shown || 0);
-  els.currentScore.dataset.shown = String(target);
-  if (shown !== target) {
-    animateCount(els.currentScore, shown, target, 700);
-    if (target > shown) bumpScore(els.currentScore);
+  els.currentScore.dataset.shown = String(team.score);
+  if (shown !== team.score) {
+    animateCount(els.currentScore, shown, team.score, 700);
+    if (team.score > shown) bumpScore(els.currentScore);
   } else {
-    els.currentScore.textContent = fmt(target);
+    els.currentScore.textContent = fmt(team.score);
   }
 }
 
 function renderProtocol(team) {
   els.protocol.innerHTML = '';
-  const entries = isTiebreak() ? (state.tiebreak.log[team.id] || []) : team.log;
+  const entries = team.log;
   if (!entries.length) {
     els.protocol.innerHTML = '<div class="log-empty">Noch keine Einträge in dieser Phase.</div>';
     return;
@@ -341,32 +322,16 @@ function renderProtocol(team) {
 }
 
 function renderFooterButton() {
-  if (isTiebreak()) return;
   const last = state.playIndex >= state.order.length - 1;
   els.btnNextTeam.textContent = last ? 'Zur Auflösung ▸' : 'Nächstes Team ▸';
-}
-
-function currentLogEntries() {
-  const team = teamById(currentTeamId());
-  return isTiebreak() ? state.tiebreak.log[team.id] : team.log;
 }
 
 function addPoints(amount) {
   const team = teamById(currentTeamId());
   if (!team || !Number.isFinite(amount)) return;
-  const entry = G.makeLogEntry(
-    isTiebreak() ? state.tiebreak.round : state.round,
-    'points',
-    amount,
-    '',
-    isTiebreak() ? 'tiebreak' : 'game'
-  );
-  if (isTiebreak()) {
-    state.tiebreak.scores[team.id] = (state.tiebreak.scores[team.id] || 0) + amount;
-  } else {
-    team.score += amount;
-  }
-  currentLogEntries().push(entry);
+  const entry = G.makeLogEntry(state.round, 'points', amount, '', 'game');
+  team.score += amount;
+  team.log.push(entry);
   save();
   renderPlay();
 }
@@ -375,29 +340,20 @@ function useJoker() {
   const team = teamById(currentTeamId());
   if (!team || team.jokers <= 0) return;
   const note = els.inJokerNote.value.trim();
-  const entry = G.makeLogEntry(
-    isTiebreak() ? state.tiebreak.round : state.round,
-    'joker',
-    null,
-    note,
-    isTiebreak() ? 'tiebreak' : 'game'
-  );
+  const entry = G.makeLogEntry(state.round, 'joker', null, note, 'game');
   team.jokers -= 1;
-  currentLogEntries().push(entry);
+  team.log.push(entry);
   els.inJokerNote.value = '';
   save();
   renderPlay();
 }
 
 function undoLast() {
-  const entries = currentLogEntries();
   const team = teamById(currentTeamId());
-  if (!entries || !entries.length || !team) return;
-  const entry = entries.pop();
+  if (!team || !team.log.length) return;
+  const entry = team.log.pop();
   if (entry.type === 'joker') {
     team.jokers += 1;
-  } else if (isTiebreak()) {
-    state.tiebreak.scores[team.id] = (state.tiebreak.scores[team.id] || 0) - entry.amount;
   } else {
     team.score -= entry.amount;
   }
@@ -406,7 +362,6 @@ function undoLast() {
 }
 
 function nextTeam() {
-  if (isTiebreak()) return;
   if (state.playIndex < state.order.length - 1) {
     state.playIndex += 1;
     save();
@@ -532,98 +487,75 @@ function nextFromResolve() {
   }
 }
 
-/* ================= Tiebreaker ================= */
+/* ================= Tiebreaker (Head-to-Head) ================= */
 
 function startTiebreak(teamIds) {
   state.tiebreak = {
     teamIds: teamIds.slice(),
-    order: teamIds.slice(),
-    scores: {},
-    log: {},
-    index: 0,
-    round: 1
+    champion: null,
+    eliminated: [],
+    challengerIndex: 1
   };
-  teamIds.forEach((id) => {
-    state.tiebreak.log[id] = [];
-  });
   state.phase = 'tiebreak';
   save();
-  enterTurn();
+  showScreen('tiebreak');
+  renderTiebreak();
 }
 
-function nextTiebreakTeam() {
-  if (state.tiebreak.index < state.tiebreak.order.length - 1) {
-    state.tiebreak.index += 1;
-    save();
-    enterTurn();
-  } else {
-    renderTiebreakResult();
-  }
-}
-
-function renderTiebreakResult() {
+function currentDuelTeams() {
   const tb = state.tiebreak;
-  const ranked = G.rankTiebreakGroup(tb.teamIds, tb.scores);
-  const lastTeam = teamById(tb.order[tb.order.length - 1]);
-  tb.index = tb.order.length;
+  return [tb.champion ?? tb.teamIds[0], tb.teamIds[tb.challengerIndex]];
+}
 
-  renderQueue();
-  renderJokers(lastTeam);
-  renderProtocol(lastTeam);
+function renderTiebreak() {
+  const tb = state.tiebreak;
+  const totalDuels = tb.teamIds.length - 1;
+  const duelNo = tb.eliminated.length + 1;
+  els.tiebreakTitle.textContent =
+    totalDuels > 1 ? `Tiebreaker – Duell ${duelNo} von ${totalDuels}` : 'Tiebreaker';
+  els.tiebreakSub.textContent =
+    'Head-to-head: Es gibt keine Punkte und keine Joker – nur die Entscheidung, wer gewinnt.';
 
-  els.turnTitle.textContent = 'Tiebreaker – Entscheidung';
-  els.turnSub.textContent = ranked
-    ? `${lastTeam.name} hat die Entscheidung gewonnen!`
-    : 'Immer noch Gleichstand – es braucht eine Verlängerung.';
-
-  els.protocol.innerHTML = '';
-  tb.order.forEach((id) => {
+  els.duelGrid.innerHTML = '';
+  currentDuelTeams().forEach((id) => {
     const team = teamById(id);
-    const row = document.createElement('div');
-    row.className = 'log-entry';
-    row.innerHTML =
-      `<div class="l-main"><strong>${esc(team.name)}</strong></div>` +
-      `<span class="l-amount pos">${fmt(tb.scores[id] || 0)} 🦅</span>`;
-    els.protocol.appendChild(row);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'duel-card';
+    card.innerHTML =
+      `<div class="duel-name">${esc(team.name)}</div>` +
+      `<div class="duel-players">${esc(team.players[0])} &amp; ${esc(team.players[1])}</div>`;
+    card.addEventListener('click', () => decideTiebreak(id));
+    els.duelGrid.appendChild(card);
   });
+}
 
-  els.currentScore.dataset.shown = '0';
-  els.currentScore.textContent = '—';
-  els.btnUseJoker.disabled = true;
-
-  els.btnNextTeam.textContent = ranked ? 'Entscheidung übernehmen ✓' : 'Verlängerung starten ▸';
-  els.btnNextTeam.dataset.action = ranked ? 'finish-tiebreak' : 'prolong-tiebreak';
+function decideTiebreak(winnerId) {
+  const tb = state.tiebreak;
+  const [aId, bId] = currentDuelTeams();
+  const loserId = winnerId === aId ? bId : aId;
+  tb.champion = winnerId;
+  tb.eliminated.push(loserId);
+  tb.challengerIndex += 1;
+  save();
+  if (tb.challengerIndex < tb.teamIds.length) {
+    renderTiebreak();
+  } else {
+    finishTiebreak();
+  }
 }
 
 function finishTiebreak() {
   const tb = state.tiebreak;
-  const ranked = G.rankTiebreakGroup(tb.teamIds, tb.scores);
-  if (!ranked) return;
-  state.resolvedGroups.push(ranked);
+  const ranking = G.duelRanking(tb.champion, tb.eliminated);
+  state.resolvedGroups.push(ranking);
+  state.tiebreak = null;
   save();
 
   const standings = G.computeStandings(state.teams);
   const remaining = G.findTieGroups(standings, state.resolvedGroups);
-  state.tiebreak = null;
-  if (remaining.length) {
-    startTiebreak(remaining[0]);
-  } else {
-    showPodium();
-  }
-}
-
-function prolongTiebreak() {
-  const tb = state.tiebreak;
-  tb.round += 1;
-  tb.scores = {};
-  tb.log = {};
-  tb.teamIds.forEach((id) => {
-    tb.log[id] = [];
-  });
-  tb.order = G.rotateOrder(tb.order, 1);
-  tb.index = 0;
-  save();
-  enterTurn();
+  if (remaining.length) startTiebreak(remaining[0]);
+  else showPodium();
 }
 
 /* ================= Podium ================= */
@@ -754,21 +686,6 @@ function newGame() {
 
 /* ================= Events ================= */
 
-function onFooterButton() {
-  if (isTiebreak()) {
-    const action = els.btnNextTeam.dataset.action;
-    if (state.tiebreak.index < state.tiebreak.order.length) {
-      nextTiebreakTeam();
-    } else if (action === 'finish-tiebreak') {
-      finishTiebreak();
-    } else if (action === 'prolong-tiebreak') {
-      prolongTiebreak();
-    }
-    return;
-  }
-  nextTeam();
-}
-
 function bindEvents() {
   els.teamForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -792,12 +709,12 @@ function bindEvents() {
       renderSetup();
     } else if (state.phase === 'play') {
       enterTurn();
-    } else if (state.phase === 'tiebreak') {
-      if (state.tiebreak.index >= state.tiebreak.order.length) renderTiebreakResult();
-      else enterTurn();
     } else if (state.phase === 'resolve') {
       showScreen('resolve');
       renderResolve();
+    } else if (state.phase === 'tiebreak') {
+      showScreen('tiebreak');
+      renderTiebreak();
     } else if (state.phase === 'podium') {
       showPodium();
     }
@@ -829,7 +746,7 @@ function bindEvents() {
       els.overlay.classList.add('hidden');
     }
   });
-  els.btnNextTeam.addEventListener('click', onFooterButton);
+  els.btnNextTeam.addEventListener('click', nextTeam);
   els.btnResolveNext.addEventListener('click', nextFromResolve);
   els.btnNewGame.addEventListener('click', newGame);
   window.addEventListener('resize', resizeConfettiCanvas);

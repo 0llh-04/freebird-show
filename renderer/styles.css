@@ -402,6 +402,29 @@ input:focus {
   box-shadow: 0 0 34px rgba(139, 92, 246, 0.28);
 }
 
+.lb-row.moved {
+  animation: lb-in 0.9s ease forwards, row-glow 2.2s ease;
+}
+
+@keyframes row-glow {
+  0% { box-shadow: 0 0 0 rgba(168, 85, 247, 0); }
+  30% { box-shadow: 0 0 44px rgba(168, 85, 247, 0.6); }
+  100% { box-shadow: 0 0 0 rgba(168, 85, 247, 0); }
+}
+
+.lb-move {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-left: 10px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.lb-move.up { color: var(--green); background: rgba(52, 211, 153, 0.16); }
+.lb-move.down { color: var(--danger); background: rgba(248, 113, 113, 0.16); }
+
 .lb-rank {
   width: 52px;
   height: 52px;
@@ -453,10 +476,25 @@ input:focus {
 
 .duel-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  max-width: 900px;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 26px;
+  max-width: 980px;
   margin: 0 auto;
+  align-items: stretch;
+}
+
+.duel-vs {
+  align-self: center;
+  font-size: 4.2rem;
+  padding: 0 6px;
+  filter: drop-shadow(0 10px 26px rgba(248, 113, 113, 0.4));
+  animation: gloves-clash 1.3s ease-in-out infinite;
+}
+
+@keyframes gloves-clash {
+  0%, 100% { transform: translateX(0) scale(1); }
+  25% { transform: translateX(-16px) rotate(-12deg) scale(1.12); }
+  75% { transform: translateX(16px) rotate(12deg) scale(1.12); }
 }
 
 .duel-card {

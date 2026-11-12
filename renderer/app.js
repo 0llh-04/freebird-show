@@ -58,6 +58,7 @@ const els = {
 };
 
 let state = null;
+const lastRanks = new Map();
 
 /* ================= State ================= */
 
@@ -217,6 +218,7 @@ function startGame() {
   state.resolvedGroups = [];
   state.phase = 'play';
   save();
+  lastRanks.clear();
   enterTurn();
 }
 
@@ -398,6 +400,8 @@ function renderResolve() {
     const delay = index * 220;
     let row = rowsById.get(String(team.id));
     const isNew = !row;
+    const prevRank = lastRanks.get(team.id);
+    const delta = prevRank == null ? 0 : prevRank - index;
     if (isNew) {
       row = document.createElement('div');
       row.className = 'lb-row';
@@ -410,8 +414,15 @@ function renderResolve() {
         '<div class="lb-jokers"></div>';
     }
     row.classList.toggle('first', index === 0);
+    row.classList.toggle('moved', delta !== 0);
     row.querySelector('.lb-rank').textContent = index === 0 ? '🥇' : `${index + 1}.`;
-    row.querySelector('.lb-name').textContent = team.name;
+    const moveBadge =
+      delta > 0
+        ? `<span class="lb-move up">▲ ${delta}</span>`
+        : delta < 0
+          ? `<span class="lb-move down">▼ ${Math.abs(delta)}</span>`
+          : '';
+    row.querySelector('.lb-name').innerHTML = `${esc(team.name)}${moveBadge}`;
     row.querySelector('.lb-players').textContent = `${team.players[0]} & ${team.players[1]}`;
     const barEl = row.querySelector('.lb-bar');
     barEl.style.transitionDelay = `${delay}ms`;
@@ -439,11 +450,13 @@ function renderResolve() {
       row.style.transition = 'none';
       row.style.transform = `translateY(${dy}px)`;
       requestAnimationFrame(() => {
-        row.style.transition = 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+        row.style.transition = 'transform 1.4s cubic-bezier(0.34, 1.4, 0.36, 1)';
         row.style.transform = '';
       });
     });
   });
+
+  standings.forEach((team, index) => lastRanks.set(team.id, index));
 
   renderResolveFooter(standings);
 }
@@ -516,10 +529,12 @@ function renderTiebreak() {
   els.tiebreakTitle.textContent =
     totalDuels > 1 ? `Tiebreaker – Duell ${duelNo} von ${totalDuels}` : 'Tiebreaker';
   els.tiebreakSub.textContent =
-    'Head-to-head: Es gibt keine Punkte und keine Joker – nur die Entscheidung, wer gewinnt.';
+    'Zweikampf! Es gibt keine Punkte und keine Joker – wer gewinnt das Duell? 🥊';
 
   els.duelGrid.innerHTML = '';
-  currentDuelTeams().forEach((id) => {
+  const [aId, bId] = currentDuelTeams();
+
+  const makeCard = (id) => {
     const team = teamById(id);
     const card = document.createElement('button');
     card.type = 'button';
@@ -528,8 +543,16 @@ function renderTiebreak() {
       `<div class="duel-name">${esc(team.name)}</div>` +
       `<div class="duel-players">${esc(team.players[0])} &amp; ${esc(team.players[1])}</div>`;
     card.addEventListener('click', () => decideTiebreak(id));
-    els.duelGrid.appendChild(card);
-  });
+    return card;
+  };
+
+  const gloves = document.createElement('div');
+  gloves.className = 'duel-vs';
+  gloves.textContent = '🥊';
+
+  els.duelGrid.appendChild(makeCard(aId));
+  els.duelGrid.appendChild(gloves);
+  els.duelGrid.appendChild(makeCard(bId));
 }
 
 function decideTiebreak(winnerId) {
@@ -677,6 +700,7 @@ function newGame() {
   const totalRounds = state ? state.totalRounds : 3;
   state = freshState();
   state.totalRounds = totalRounds;
+  lastRanks.clear();
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (err) {

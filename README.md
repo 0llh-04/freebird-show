@@ -10,7 +10,7 @@ Joker/Hinweise protokollieren, animiertes Leaderboard, Tiebreaker-Runde und Podi
 - **Auflösungsphase**: Leaderboard mit hochzählendem Gesamtpunktestand (Animation), animiertem Platzwechsel (FLIP) und Balkenanzeige.
 - **Rundenwechsel**: Jede neue Runde startet mit einer anderen (rotierten) Teamreihenfolge.
 - **Tiebreaker**: Bei Punktegleichstand nach der letzten Runde treten die betroffenen Teams head-to-head gegeneinander an – eine reine entweder-oder-Entscheidung ohne Punkte und ohne Joker, die nur die Platzierung im Leaderboard bestimmt.
-- **Podium**: Siegerteam wird gekürt, Teamnamen blenden langsam ein, Konfetti in den Show-Farben, finaler Punktestand aller Teams. Optional mit Musik: eigene MP3 unter `renderer/assets/podium.mp3` ablegen (wird per `.gitignore` nicht committet) – sie startet automatisch mit der Siegerehrung und stoppt bei „Neues Spiel“.
+- **Podium**: Siegerteam wird gekürt, Teamnamen blenden langsam ein, Konfetti in den Show-Farben, finaler Punktestand aller Teams.
 - **Autosave**: Der Show-Zustand wird lokal gespeichert; nach einem Neustart kann fortgesetzt werden.
 - **Design**: dunkler Hintergrund mit Verlauf von Lila über Blau nach Grün.
 

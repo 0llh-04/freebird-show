@@ -60,9 +60,6 @@ const els = {
 let state = null;
 const lastRanks = new Map();
 
-const podiumAudio = new Audio('assets/podium.mp3');
-podiumAudio.volume = 0.85;
-
 /* ================= State ================= */
 
 function freshState() {
@@ -606,24 +603,6 @@ function showPodium() {
   showScreen('podium');
   renderPodium();
   startConfetti();
-  playPodiumMusic();
-}
-
-function playPodiumMusic() {
-  try {
-    podiumAudio.currentTime = 0;
-    podiumAudio.play().catch(() => {});
-  } catch (err) {
-    /* keine Musik-Datei vorhanden – Show läuft ohne weiter */
-  }
-}
-
-function stopPodiumMusic() {
-  try {
-    podiumAudio.pause();
-  } catch (err) {
-    /* ignore */
-  }
 }
 
 function renderPodium() {
@@ -730,7 +709,6 @@ function stopConfetti() {
 
 function newGame() {
   stopConfetti();
-  stopPodiumMusic();
   const totalRounds = state ? state.totalRounds : 3;
   state = freshState();
   state.totalRounds = totalRounds;

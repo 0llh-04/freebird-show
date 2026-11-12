@@ -395,6 +395,7 @@ function renderResolve() {
   const maxScore = Math.max(1, ...standings.map((t) => t.score));
 
   standings.forEach((team, index) => {
+    const delay = index * 220;
     let row = rowsById.get(String(team.id));
     const isNew = !row;
     if (isNew) {
@@ -412,18 +413,19 @@ function renderResolve() {
     row.querySelector('.lb-rank').textContent = index === 0 ? '🥇' : `${index + 1}.`;
     row.querySelector('.lb-name').textContent = team.name;
     row.querySelector('.lb-players').textContent = `${team.players[0]} & ${team.players[1]}`;
-    row.querySelector('.lb-bar').style.width =
-      `${Math.max(0, Math.min(100, (team.score / maxScore) * 100))}%`;
+    const barEl = row.querySelector('.lb-bar');
+    barEl.style.transitionDelay = `${delay}ms`;
+    barEl.style.width = `${Math.max(0, Math.min(100, (team.score / maxScore) * 100))}%`;
+    row.style.animationDelay = `${delay}ms`;
     row.querySelector('.lb-jokers').textContent = `🃏 ${team.jokers} / ${G.JOKERS_PER_TEAM} Joker`;
 
     const scoreEl = row.querySelector('.lb-score');
     const shown = Number(scoreEl.dataset.shown || 0);
     scoreEl.dataset.shown = String(team.score);
-    if (isNew) {
-      animateCount(scoreEl, 0, team.score, 1100);
-    } else if (shown !== team.score) {
-      animateCount(scoreEl, shown, team.score, 1100);
-    }
+    setTimeout(() => {
+      if (isNew) animateCount(scoreEl, 0, team.score, 1800);
+      else if (shown !== team.score) animateCount(scoreEl, shown, team.score, 1800);
+    }, delay);
 
     els.leaderboard.appendChild(row);
   });
@@ -437,7 +439,7 @@ function renderResolve() {
       row.style.transition = 'none';
       row.style.transform = `translateY(${dy}px)`;
       requestAnimationFrame(() => {
-        row.style.transition = 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
+        row.style.transition = 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
         row.style.transform = '';
       });
     });

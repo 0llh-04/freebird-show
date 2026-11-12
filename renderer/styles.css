@@ -335,7 +335,7 @@ input:focus {
   100% { transform: scale(1); }
 }
 
-.quick-points { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.quick-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
 .btn.point { text-align: center; padding: 12px 6px; }
 
 #btn-undo { width: 100%; margin-top: 14px; }

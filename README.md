@@ -6,7 +6,7 @@ Joker/Hinweise protokollieren, animiertes Leaderboard, Tiebreaker-Runde und Podi
 ## Features
 
 - **Setup**: Teams mit Namen und je zwei Spielern erstellen, Anzahl der Runden festlegen (jedes Team startet mit 6 Jokern).
-- **Spielphase**: „Team X ist am Zug“-Einblendung, Joker-Einsatz mit optionalem Notizfeld wird protokolliert, Punkte (auch negative Korrekturen) mit Sofort-Buttons (+10/+25/+50/+100) oder freier Eingabe vergeben, letzte Aktion kann zurückgenommen werden.
+- **Spielphase**: „Team X ist am Zug“-Einblendung, Joker-Einsatz mit optionalem Notizfeld wird protokolliert, Punkte (auch negative Korrekturen) mit Sofort-Buttons (+1/+5/+10) oder freier Eingabe vergeben, letzte Aktion kann zurückgenommen werden.
 - **Auflösungsphase**: Leaderboard mit hochzählendem Gesamtpunktestand (Animation), animiertem Platzwechsel (FLIP) und Balkenanzeige.
 - **Rundenwechsel**: Jede neue Runde startet mit einer anderen (rotierten) Teamreihenfolge.
 - **Tiebreaker**: Bei Punktegleichstand nach der letzten Runde treten nur die betroffenen Teams gegeneinander an – Punkte zählen nur für die Entscheidung, nicht für die Gesamtwertung. Bei erneutem Gleichstand gibt es eine Verlängerung.

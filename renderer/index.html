@@ -90,10 +90,9 @@
           <h2>🦅 Punkte vergeben</h2>
           <div class="score-big" id="current-score">0</div>
           <div class="quick-points">
+            <button class="btn point" data-points="1">+1</button>
+            <button class="btn point" data-points="5">+5</button>
             <button class="btn point" data-points="10">+10</button>
-            <button class="btn point" data-points="25">+25</button>
-            <button class="btn point" data-points="50">+50</button>
-            <button class="btn point" data-points="100">+100</button>
           </div>
           <div class="row gap">
             <label class="grow">Eigene Punktzahl
@@ -123,7 +122,16 @@
       <div id="leaderboard" class="leaderboard"></div>
       <div class="footer-nav">
         <button id="btn-resolve-next" class="btn big primary">Weiter ▸</button>
+        <button id="btn-add-round" class="btn ghost">＋ Weitere Runde hinzufügen</button>
       </div>
+    </section>
+
+    <section id="screen-tiebreak" class="screen hidden">
+      <div class="resolve-head">
+        <h2 id="tiebreak-title">Tiebreaker</h2>
+        <p class="hint" id="tiebreak-sub"></p>
+      </div>
+      <div id="duel-grid" class="duel-grid"></div>
     </section>
 
     <section id="screen-podium" class="screen hidden">

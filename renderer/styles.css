@@ -371,6 +371,8 @@ input:focus {
 
 .footer-nav { text-align: center; margin-top: 26px; }
 
+.footer-nav .btn { margin: 6px 8px; }
+
 /* ---------- Resolve / Leaderboard ---------- */
 
 .resolve-head { text-align: center; margin: 8px 0 22px; }

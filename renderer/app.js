@@ -44,6 +44,7 @@ const els = {
   resolveSub: $('resolve-sub'),
   leaderboard: $('leaderboard'),
   btnResolveNext: $('btn-resolve-next'),
+  btnAddRound: $('btn-add-round'),
   tiebreakTitle: $('tiebreak-title'),
   tiebreakSub: $('tiebreak-sub'),
   duelGrid: $('duel-grid'),
@@ -462,6 +463,7 @@ function renderResolve() {
 }
 
 function renderResolveFooter(standings) {
+  els.btnAddRound.textContent = `＋ Weitere Runde (gesamt: ${state.totalRounds})`;
   if (state.round < state.totalRounds) {
     els.resolveSub.textContent =
       'Gesamtpunkte aller Teams · Danach geht es in die nächste Runde (neue Reihenfolge).';
@@ -500,6 +502,13 @@ function nextFromResolve() {
   } else {
     showPodium();
   }
+}
+
+function addRound() {
+  state.totalRounds += 1;
+  save();
+  updateRoundIndicator();
+  renderResolveFooter(G.computeStandings(state.teams));
 }
 
 /* ================= Tiebreaker (Head-to-Head) ================= */
@@ -591,8 +600,18 @@ function finishTiebreak() {
 
   const standings = G.computeStandings(state.teams);
   const remaining = G.findTieGroups(standings, state.resolvedGroups);
-  if (remaining.length) startTiebreak(remaining[0]);
-  else showPodium();
+  if (remaining.length) {
+    startTiebreak(remaining[0]);
+  } else if (state.round < state.totalRounds) {
+    state.round += 1;
+    state.order = G.rotateOrder(state.baseOrder, state.round - 1);
+    state.playIndex = 0;
+    state.phase = 'play';
+    save();
+    enterTurn();
+  } else {
+    showPodium();
+  }
 }
 
 /* ================= Podium ================= */
@@ -786,6 +805,7 @@ function bindEvents() {
   });
   els.btnNextTeam.addEventListener('click', nextTeam);
   els.btnResolveNext.addEventListener('click', nextFromResolve);
+  els.btnAddRound.addEventListener('click', addRound);
   els.btnNewGame.addEventListener('click', newGame);
   window.addEventListener('resize', resizeConfettiCanvas);
 }
